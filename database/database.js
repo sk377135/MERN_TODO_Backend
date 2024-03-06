@@ -5,8 +5,8 @@ export const connectDB = () => {
     .connect(process.env.mongoURI, {
       dbName: "MERN_TODO",
     })
-    .then(() => {
-      console.log(`Database is connected `);
+    .then(c => {
+      console.log(`Database is connected ${c.connection.host} `);
     })
     .catch(e => {
       console.log(e);
