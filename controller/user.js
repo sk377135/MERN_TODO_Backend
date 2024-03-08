@@ -61,14 +61,13 @@ export const findProfile = (req, res) => {
 };
 export const logout = async (req, res) => {
   res
-    .status(200)
-    .cookie("token", " ", {
-      expires: new Date(Date.now()),
-      SameSite: process.env.NODE_ENV === "developement" ? "LEX" : "none",
-      secure: process.env.NODE_ENV === "developement" ? false : true,
+    .clearCookie("token", {
+      sameSite: process.env.NODE_ENV === "development" ? "Lax" : "None",
+      secure: process.env.NODE_ENV === "development" ? false : true,
     })
+    .status(200)
     .json({
-      sucess: true,
-      message: "Logout Sucessfully",
+      success: true,
+      message: "Logout Successfully",
     });
 };
