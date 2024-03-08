@@ -61,11 +61,18 @@ export const findProfile = (req, res) => {
 };
 export const logout = async (req, res) => {
   res
+    .status(200)
+    .cookie("token", "", {
+      expires: new Date(0), // Set expires to a past date
+      sameSite: process.env.NODE_ENV === "development" ? "Lax" : "None", // Use sameSite instead of SameSite
+      secure: process.env.NODE_ENV === "development" ? false : true,
+      httpOnly: true, // Set httpOnly to true for added security
+    })
     .clearCookie("token", {
       sameSite: process.env.NODE_ENV === "development" ? "Lax" : "None",
       secure: process.env.NODE_ENV === "development" ? false : true,
+      httpOnly: true,
     })
-    .status(200)
     .json({
       success: true,
       message: "Logout Successfully",
