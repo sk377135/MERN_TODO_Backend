@@ -10,7 +10,7 @@ export const setCookies = (user, res, message, statusCode = 200) => {
       httpOnly: true,
       maxAge: 15 * 60 * 1000,
 
-      SameSite: process.env.NODE_ENV === "developement" ? "lax" : "none",
+      SameSite: process.env.NODE_ENV === "developement" ? "Lax" : "None",
 
       secure: process.env.NODE_ENV === "developement" ? false : true,
     })
