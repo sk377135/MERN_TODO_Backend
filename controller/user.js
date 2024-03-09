@@ -43,6 +43,7 @@ export const registerUser = async (req, res) => {
 };
 
 export const findProfile = (req, res) => {
+  console.log(req.user);
   res.status(200).json({
     success: true,
     user: req.user,
