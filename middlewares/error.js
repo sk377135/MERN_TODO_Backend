@@ -6,11 +6,12 @@ class ErrorHeandler extends Error {
 }
 
 export const errorMiddleware = (err, req, res, next) => {
+  console.error(err.stack); // Log the error stack trace
   err.message = err.message || "Internal Server Error";
   err.statusCode = err.statusCode || 500;
   return res
     .status(err.statusCode)
-    .json({ sucess: false, message: err.message });
+    .json({ success: false, message: err.message });
 };
 
 export default ErrorHeandler;

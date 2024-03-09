@@ -11,7 +11,7 @@ export const login = async (req, res, next) => {
 
     if (!user) return next(new ErrorHeandler("Invalid Email or password", 400));
 
-    const isMatch = bcrypt.compare(password, user.password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
       return next(new ErrorHeandler("Invalid Email or password", 400));
 
@@ -43,10 +43,10 @@ export const registerUser = async (req, res) => {
 };
 
 export const findProfile = (req, res) => {
-  console.log(req.user);
   res.status(200).json({
     success: true,
     user: req.user,
+    message: "this is user",
   });
 };
 export const logout = async (req, res) => {
