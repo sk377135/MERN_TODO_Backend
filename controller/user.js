@@ -1,21 +1,33 @@
-import { json } from "express";
 import { User } from "../model/user.js";
 import bcrypt from "bcrypt";
-import { config } from "dotenv";
+
 import { setCookies } from "../utils/feature.js";
+import ErrorHeandler from "../middlewares/error.js";
+
+export const login = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email }).select("+password");
+
+    if (!user) return next(new ErrorHeandler("Invalid Email or password", 400));
+
+    const isMatch = bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return next(new ErrorHeandler("Invalid Email or password", 400));
+
+    setCookies(user, res, `Welcome back ${user.name}`, 200);
+  } catch (error) {
+    next(error);
+  }
+};
 export const registerUser = async (req, res) => {
   try {
     ////? got the data from the front-end;
-    const { name, email, password } = await req.body;
+    const { name, email, password } = req.body;
 
     ////? Trying to findout the if already exits;
     let user = await User.findOne({ email });
-    if (user) {
-      return res.status(404).json({
-        sucess: false,
-        message: "User already exits",
-      });
-    }
+    if (user) return next(new ErrorHeandler("User Already Exist", 400));
 
     ////? Protecting the password by encripting it;
     const hassedpassword = await bcrypt.hash(password, 10);
@@ -24,30 +36,7 @@ export const registerUser = async (req, res) => {
     user = await User.create({ name, email, password: hassedpassword });
 
     ////?  setCookies;
-    setCookies(user, res, 201, "Register Sucessfully");
-  } catch (error) {
-    next(error);
-  }
-};
-
-export const login = async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const user = await User.findOne({ email }).select("+password");
-
-    if (!user)
-      return res.status(404).json({
-        sucess: false,
-        message: "Invalid user or password",
-      });
-
-    const isMatch = bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res
-        .status(404)
-        .json({ sucess: false, message: "Invalid user or password" });
-
-    setCookies(user, res, 200, `Welcome back ${user.name}`);
+    setCookies(user, res, "Register Successfully", 201);
   } catch (error) {
     next(error);
   }
@@ -55,7 +44,7 @@ export const login = async (req, res, next) => {
 
 export const findProfile = (req, res) => {
   res.status(200).json({
-    sucess: true,
+    success: true,
     user: req.user,
   });
 };
@@ -63,18 +52,14 @@ export const logout = async (req, res) => {
   res
     .status(200)
     .cookie("token", "", {
-      expires: new Date(0), // Set expires to a past date
-      sameSite: process.env.NODE_ENV === "development" ? "Lax" : "None", // Use sameSite instead of SameSite
+      expires: new Date(Date.now()),
+
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
+
       secure: process.env.NODE_ENV === "development" ? false : true,
-      httpOnly: true, // Set httpOnly to true for added security
-    })
-    .clearCookie("token", {
-      sameSite: process.env.NODE_ENV === "development" ? "Lax" : "None",
-      secure: process.env.NODE_ENV === "development" ? false : true,
-      httpOnly: true,
     })
     .json({
       success: true,
-      message: "Logout Successfully",
+      user: req.user,
     });
 };

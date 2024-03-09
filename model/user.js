@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+
 const MERN_TODO_Schema = new mongoose.Schema({
   name: {
     type: String,
@@ -7,10 +8,12 @@ const MERN_TODO_Schema = new mongoose.Schema({
   email: {
     type: String,
     unique: true,
+    required: true,
   },
   password: {
     type: String,
     select: false,
+    required: true,
   },
   createdAt: {
     type: Date,
