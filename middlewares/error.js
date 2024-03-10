@@ -1,4 +1,4 @@
-class ErrorHeandler extends Error {
+class ErrorHandler extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
@@ -6,7 +6,6 @@ class ErrorHeandler extends Error {
 }
 
 export const errorMiddleware = (err, req, res, next) => {
-  console.error(err.stack); // Log the error stack trace
   err.message = err.message || "Internal Server Error";
   err.statusCode = err.statusCode || 500;
   return res
@@ -14,4 +13,4 @@ export const errorMiddleware = (err, req, res, next) => {
     .json({ success: false, message: err.message });
 };
 
-export default ErrorHeandler;
+export default ErrorHandler;

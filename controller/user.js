@@ -2,32 +2,32 @@ import { User } from "../model/user.js";
 import bcrypt from "bcrypt";
 
 import { setCookies } from "../utils/feature.js";
-import ErrorHeandler from "../middlewares/error.js";
+import ErrorHandler from "../middlewares/error.js";
 
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email }).select("+password");
 
-    if (!user) return next(new ErrorHeandler("Invalid Email or password", 400));
+    if (!user) return next(new ErrorHandler("Invalid Email or password", 400));
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
-      return next(new ErrorHeandler("Invalid Email or password", 400));
+      return next(new ErrorHandler("Invalid Email or password", 400));
 
     setCookies(user, res, `Welcome back ${user.name}`, 200);
   } catch (error) {
     next(error);
   }
 };
-export const registerUser = async (req, res) => {
+export const registerUser = async (req, res, next) => {
   try {
     ////? got the data from the front-end;
     const { name, email, password } = req.body;
 
     ////? Trying to findout the if already exits;
     let user = await User.findOne({ email });
-    if (user) return next(new ErrorHeandler("User Already Exist", 400));
+    if (user) return next(new ErrorHandler("User Already Exist", 400));
 
     ////? Protecting the password by encripting it;
     const hassedpassword = await bcrypt.hash(password, 10);
