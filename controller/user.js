@@ -46,7 +46,6 @@ export const findProfile = (req, res) => {
   res.status(200).json({
     success: true,
     user: req.user,
-    message: "this is user",
   });
 };
 export const logout = async (req, res) => {
