@@ -12,11 +12,6 @@ export const app = express();
 config({
   path: "./database/config.env",
 });
-
-app.use(express.json());
-
-app.use(cookieParser());
-
 app.use(
   cors({
     origin: [process.env.Frontend_URL],
@@ -24,6 +19,10 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(express.json());
+
+app.use(cookieParser());
 
 app.use("/api/v1/user", router);
 app.use("/api/v1/task", Task_router);
