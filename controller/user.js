@@ -27,7 +27,7 @@ export const registerUser = async (req, res, next) => {
 
     ////? Trying to findout the if already exits;
     let user = await User.findOne({ email });
-    if (user) return next(new ErrorHandler("User Already Exist", 400));
+    if (user) return next(new ErrorHandler("Invalid Email or password", 400));
 
     ////? Protecting the password by encripting it;
     const hassedpassword = await bcrypt.hash(password, 10);
